@@ -59,8 +59,7 @@ const part1 = (rawInput: string) => {
   input.forEach((game) => {
     let possible = true;
     game.sets.forEach((set) => {
-      if (set.red > redCubes || set.green > greenCubes || set.blue > blueCubes)
-        possible = false;
+      if (set.red > redCubes || set.green > greenCubes || set.blue > blueCubes) possible = false;
     });
     if (possible) idSum += game.id;
   });
