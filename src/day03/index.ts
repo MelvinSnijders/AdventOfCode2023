@@ -1,100 +1,81 @@
 import run from "aocrunner";
 
-const parseInput = (rawInput: string) => rawInput;
+const parseInput = (rawInput: string) => rawInput.split("\n");
 
-const getAdjacentCharacters = (
-  lines: string[],
-  lineIndex: number,
-  charIndex: number,
-): Map<string, string> => {
+/**
+ * Get a map of all adjacent characters and their positions around a specific point in the grid.
+ * @param lines The input of the day.
+ * @param y The Y position to get adjacent characters from.
+ * @param x The X position to get adjacent characters from.
+ * @returns A map of all adjacent characters.
+ */
+const getAdjacentCharacters = (lines: string[], y: number, x: number): Map<string, string> => {
   let charMap: Map<string, string> = new Map();
-  const topLeft = lines[lineIndex - 1]?.[charIndex - 1];
-  if (topLeft) charMap.set(`${lineIndex - 1},${charIndex - 1}`, topLeft);
 
-  const topCenter = lines[lineIndex - 1]?.[charIndex];
-  if (topCenter) charMap.set(`${lineIndex - 1},${charIndex}`, topCenter);
-
-  const topRight = lines[lineIndex - 1]?.[charIndex + 1];
-  if (topRight) charMap.set(`${lineIndex - 1},${charIndex + 1}`, topRight);
-
-  const left = lines[lineIndex]?.[charIndex - 1];
-  if (left) charMap.set(`${lineIndex},${charIndex - 1}`, left);
-
-  const right = lines[lineIndex]?.[charIndex + 1];
-  if (right) charMap.set(`${lineIndex},${charIndex + 1}`, right);
-
-  const bottomLeft = lines[lineIndex + 1]?.[charIndex - 1];
-  if (bottomLeft) charMap.set(`${lineIndex + 1},${charIndex - 1}`, bottomLeft);
-
-  const bottomCenter = lines[lineIndex + 1]?.[charIndex];
-  if (bottomCenter) charMap.set(`${lineIndex + 1},${charIndex}`, bottomCenter);
-
-  const bottomRight = lines[lineIndex + 1]?.[charIndex + 1];
-  if (bottomRight)
-    charMap.set(`${lineIndex + 1},${charIndex + 1}`, bottomRight);
-
+  for (let adjY = -1; adjY <= 1; adjY++) {
+    for (let adjX = -1; adjX <= 1; adjX++) {
+      if (adjX == 0 && adjY == 0) continue;
+      const char = lines[y + adjY]?.[x + adjX];
+      if (char) charMap.set(`${y + adjY},${x + adjX}`, char);
+    }
+  }
   return charMap;
 };
 
-const checkAdjacentForSymbols = (
-  lines: string[],
-  lineIndex: number,
-  startIndex: number,
-  numberLength: number,
-): boolean => {
+/**
+ * Check if any of the adjacent characters of a number are a symbol or not.
+ * Since numbers can me multiple digits, we need to check multiple times.
+ * @param lines The input of the day.
+ * @param y The Y position of the number.
+ * @param xStart The starting X position of the number.
+ * @param length The length of the number to check.
+ * @returns Whether any of the adjacent characters are a symbol.
+ */
+
+const checkAdjacentForSymbols = (lines: string[], y: number, xStart: number, length: number): boolean => {
   const symbolRegex = /[^.0-9]+/;
 
-  for (let i = startIndex; i < startIndex + numberLength; i++) {
-    const adjacents = getAdjacentCharacters(lines, lineIndex, i);
+  for (let i = xStart; i < xStart + length; i++) {
+    const adjacents = getAdjacentCharacters(lines, y, i);
     if ([...adjacents.values()].some((c) => symbolRegex.test(c))) return true;
   }
+
   return false;
 };
 
+/**
+ * Day 3 part 1
+ */
 const part1 = (rawInput: string) => {
   const input = parseInput(rawInput);
-  const lines = input.split("\n");
 
-  return lines
-    .map((line, index) => {
-      let matches = [...line.matchAll(/\d+/g)];
-
-      return matches
-        .filter((match) =>
-          checkAdjacentForSymbols(lines, index, match.index, match[0].length),
-        )
+  return input
+    .map((line, index) =>
+      [...line.matchAll(/\d+/g)]
+        .filter((match) => checkAdjacentForSymbols(input, index, match.index, match[0].length))
         .map((match) => +match[0])
-        .reduce((a, b) => a + b, 0);
-    })
+        .reduce((a, b) => a + b, 0),
+    )
     .reduce((a, b) => a + b, 0);
 };
 
+/**
+ * Day 3 part 2
+ */
 const part2 = (rawInput: string) => {
   const input = parseInput(rawInput);
-  const lines = input.split("\n");
 
   let gears: Map<string, number[]> = new Map();
 
-  lines.map((line, index) => {
+  input.forEach((line, index) => {
     let matches = [...line.matchAll(/\d+/g)];
 
     matches.forEach((match) => {
       for (let i = match.index; i < match.index + match[0].length; i++) {
-        const adjacents = getAdjacentCharacters(lines, index, i);
-        const adjacentGear = [...adjacents.entries()].find(
-          (entry) => entry[1] == "*",
-        );
+        const adjacents = getAdjacentCharacters(input, index, i);
+        const adjacentGear = [...adjacents.entries()].find((entry) => entry[1] == "*");
         if (adjacentGear) {
-          const splitGear = adjacentGear[0].split(".");
-          const x = splitGear[0];
-          const y = splitGear[1];
-          if (gears.has(adjacentGear[0])) {
-            const existingNumbers = gears.get(adjacentGear[0]);
-            gears.set(adjacentGear[0], [...existingNumbers!, +match[0]]);
-          } else {
-            gears.set(adjacentGear[0], [+match[0]]);
-          }
-          break;
+          return gears.set(adjacentGear[0], [...(gears.get(adjacentGear[0]) || []), +match[0]]);
         }
       }
     });
