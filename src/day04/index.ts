@@ -23,13 +23,9 @@ const part1 = (rawInput: string) => {
   const input = parseInput(rawInput);
   return input
     .map((game) => {
-      const winning = game.winningNumbers.filter((number) => game.numbers.includes(number));
-      const length = winning.length;
-      let points = 1;
-      for (let i = 0; i < length - 1; i++) {
-        points *= 2;
-      }
-      return length == 0 ? 0 : points;
+      const winningCount = game.winningNumbers.filter((number) => game.numbers.includes(number)).length;
+      const points = Math.pow(2, winningCount - 1);
+      return winningCount == 0 ? 0 : points;
     })
     .reduce((a, b) => a + b);
 };
