@@ -43,9 +43,7 @@ const part2 = (rawInput: string) => {
     }
   });
 
-  const totalInstances = input.map((game) => game.instances).reduce((a, b) => a + b);
-
-  return totalInstances;
+  return input.map((game) => game.instances).reduce((a, b) => a + b);
 };
 
 run({
