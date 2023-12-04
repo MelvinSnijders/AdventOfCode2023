@@ -58,13 +58,13 @@
           "109267",
           "24854"
         ],
-        "time": 1.750129
+        "time": 3.732751
       },
       "part2": {
-        "solved": false,
-        "result": null,
+        "solved": true,
+        "result": "5747443",
         "attempts": [],
-        "time": null
+        "time": 29.031134
       }
     },
     {
