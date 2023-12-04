@@ -39,10 +39,12 @@ run({
   part1: {
     tests: [
       {
-        input: `1abc2
+        input: `
+        1abc2
         pqr3stu8vwx
         a1b2c3d4e5f
-        treb7uchet`,
+        treb7uchet
+        `,
         expected: 142,
       },
     ],
@@ -51,7 +53,8 @@ run({
   part2: {
     tests: [
       {
-        input: `two1nine
+        input: `
+        two1nine
         eightwothree
         abcone2threexyz
         xtwone3four
