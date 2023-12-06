@@ -17,9 +17,6 @@ const part1 = (rawInput: string) => {
     .split(/\s+/)
     .map((s) => +s);
 
-  console.log(times);
-  console.log(distances);
-
   return times
     .map((time, index) => {
       let recordBeat = 0;
@@ -44,16 +41,11 @@ const part2 = (rawInput: string) => {
   const distance = +race[1].substring(11).trim().replace(/\s+/g, "");
 
   let recordBeat = 0;
-  for (let i = 1; i < time; i++) {
+  for (let i = distance / time; i < time; i++) {
     const totalDistance = (time - i) * i;
     if (totalDistance > distance) recordBeat++;
   }
   return recordBeat;
-
-  console.log(time);
-  console.log(distance);
-
-  return;
 };
 
 const testInput = `
