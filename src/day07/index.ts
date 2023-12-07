@@ -38,23 +38,14 @@ const determinePokerType = (countsArray: [string, number][]): PokerType => {
 
 const calculateHandType = (hand: string, replaceJoker: boolean): PokerType => {
   let countsArray: [string, number][] = countCharacters(hand);
-  const preReplace = determinePokerType(countsArray);
 
-  if (!replaceJoker) return preReplace;
+  if (replaceJoker) {
+    if (countsArray[0][1] == 5) return PokerType.FiveOfAKind;
+    hand = hand.replace(/J/gi, countsArray.filter((char) => char[0] != "J")[0][0]);
+    countsArray = countCharacters(hand);
+  }
 
-  if (countsArray[0][1] == 5) return PokerType.FiveOfAKind;
-  const most = countsArray.filter((char) => char[0] != "J")[0][0];
-  const newHand = hand.replace(/j/gi, countsArray.filter((char) => char[0] != "J")[0][0]);
-  countsArray = countCharacters(newHand);
-  const afterReplace = determinePokerType(countsArray);
-
-  return Math.max(preReplace, afterReplace);
-
-  // if (replaceJoker) {
-  //   const jokerCount = hand.split("").filter((char) => char == "J").length;
-  //   countsArray[0][1] += jokerCount;
-  //   countsArray = countsArray.filter((count) => count[0] != "J");
-  // }
+  return determinePokerType(countsArray);
 };
 
 const isHandBigger = (hand1: string, hand2: string, cards: string): number => {
@@ -80,7 +71,6 @@ const part1 = (rawInput: string) => {
 
   return sorted
     .map((hand, index) => {
-      // console.log(hand + " * " + (sorted.length - index));
       return hand[1] * (sorted.length - index);
     })
     .reduce((a, b) => a + b);
@@ -104,7 +94,6 @@ const part2 = (rawInput: string) => {
 
   return sorted
     .map((hand, index) => {
-      console.log(hand + " * " + (sorted.length - index));
       return hand[1] * (sorted.length - index);
     })
     .reduce((a, b) => a + b);
